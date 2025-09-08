@@ -91,73 +91,20 @@ class _ComparisonPageState extends State<ComparisonPage>
     final shoulderWidth = sizes['肩幅']! * 2;
     final bodyWidth = sizes['身幅']! * 2;
     final bodyHeight = sizes['着丈']! * 1.5;
+    final sleeveLength = sizes['袖丈']! * 2;
 
     return SizedBox(
       width: 120,
       height: 140,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            top: 30,
-            child: Container(
-              width: bodyWidth.clamp(40, 80),
-              height: bodyHeight.clamp(60, 100),
-              decoration: BoxDecoration(
-                color: color.withOpacity(isChild ? 0.7 : 0.5),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: color,
-                  width: isChild ? 2 : 1,
-                  style: isChild ? BorderStyle.solid : BorderStyle.none,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 10,
-            child: Container(
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                color: color.withOpacity(isChild ? 0.7 : 0.5),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: color,
-                  width: isChild ? 2 : 1,
-                  style: isChild ? BorderStyle.solid : BorderStyle.none,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 28,
-            child: Container(
-              width: shoulderWidth.clamp(35, 70),
-              height: 8,
-              decoration: BoxDecoration(
-                color: color.withOpacity(isChild ? 0.7 : 0.5),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  color: color,
-                  width: isChild ? 2 : 1,
-                  style: isChild ? BorderStyle.solid : BorderStyle.none,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            child: Text(
-              isChild ? '体型' : '服',
-              style: TextStyle(
-                fontSize: 12,
-                color: color,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+      child: CustomPaint(
+        painter: _SilhouettePainter(
+          shoulderWidth: shoulderWidth.clamp(35, 70),
+          bodyWidth: bodyWidth.clamp(40, 80),
+          bodyHeight: bodyHeight.clamp(60, 100),
+          sleeveLength: sleeveLength.clamp(20, 60),
+          color: color,
+          isChild: isChild,
+        ),
       ),
     );
   }
@@ -487,4 +434,114 @@ class _ComparisonPageState extends State<ComparisonPage>
     );
   }
 }
+
+class _SilhouettePainter extends CustomPainter {
+  const _SilhouettePainter({
+    required this.shoulderWidth,
+    required this.bodyWidth,
+    required this.bodyHeight,
+    required this.sleeveLength,
+    required this.color,
+    required this.isChild,
+  });
+
+  final double shoulderWidth;
+  final double bodyWidth;
+  final double bodyHeight;
+  final double sleeveLength;
+  final Color color;
+  final bool isChild;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final fillPaint = Paint()
+      ..color = color.withOpacity(isChild ? 0.7 : 0.5)
+      ..style = PaintingStyle.fill;
+    final strokePaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = isChild ? 2 : 1;
+
+    // Head
+    final headRadius = 12.0;
+    final headCenter = Offset(size.width / 2, headRadius + 4);
+    canvas.drawCircle(headCenter, headRadius, fillPaint);
+    if (isChild) {
+      canvas.drawCircle(headCenter, headRadius, strokePaint);
+    }
+
+    // Torso
+    final topY = headCenter.dy + headRadius + 4;
+    final bottomY = topY + bodyHeight;
+    final topLeft = Offset((size.width - shoulderWidth) / 2, topY);
+    final topRight = Offset((size.width + shoulderWidth) / 2, topY);
+    final bottomLeft = Offset((size.width - bodyWidth) / 2, bottomY);
+    final bottomRight = Offset((size.width + bodyWidth) / 2, bottomY);
+
+    final bodyPath = Path()
+      ..moveTo(topLeft.dx, topLeft.dy)
+      ..lineTo(topRight.dx, topRight.dy)
+      ..lineTo(bottomRight.dx, bottomRight.dy)
+      ..lineTo(bottomLeft.dx, bottomLeft.dy)
+      ..close();
+
+    canvas.drawPath(bodyPath, fillPaint);
+    if (isChild) {
+      canvas.drawPath(bodyPath, strokePaint);
+    }
+
+    // Arms/sleeves
+    final armTopY = topY + 5;
+    final armBottomY = armTopY + sleeveLength;
+
+    final leftArm = Path()
+      ..moveTo(topLeft.dx, armTopY)
+      ..lineTo(topLeft.dx - sleeveLength, armTopY + sleeveLength * 0.2)
+      ..lineTo(topLeft.dx - sleeveLength, armBottomY)
+      ..lineTo(topLeft.dx, armBottomY)
+      ..close();
+
+    final rightArm = Path()
+      ..moveTo(topRight.dx, armTopY)
+      ..lineTo(topRight.dx + sleeveLength, armTopY + sleeveLength * 0.2)
+      ..lineTo(topRight.dx + sleeveLength, armBottomY)
+      ..lineTo(topRight.dx, armBottomY)
+      ..close();
+
+    canvas.drawPath(leftArm, fillPaint);
+    canvas.drawPath(rightArm, fillPaint);
+    if (isChild) {
+      canvas.drawPath(leftArm, strokePaint);
+      canvas.drawPath(rightArm, strokePaint);
+    }
+
+    // Label
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: isChild ? '体型' : '服',
+        style: TextStyle(
+          fontSize: 12,
+          color: color,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    textPainter.paint(
+      canvas,
+      Offset((size.width - textPainter.width) / 2, size.height - textPainter.height),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _SilhouettePainter oldDelegate) {
+    return shoulderWidth != oldDelegate.shoulderWidth ||
+        bodyWidth != oldDelegate.bodyWidth ||
+        bodyHeight != oldDelegate.bodyHeight ||
+        sleeveLength != oldDelegate.sleeveLength ||
+        color != oldDelegate.color ||
+        isChild != oldDelegate.isChild;
+  }
+}
+
 
