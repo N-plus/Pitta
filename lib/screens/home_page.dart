@@ -193,7 +193,7 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 120,
+        constraints: const BoxConstraints(minHeight: 120),
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -208,6 +208,7 @@ class HomePage extends StatelessWidget {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.all(12),
