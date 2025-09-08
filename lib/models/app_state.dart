@@ -26,4 +26,17 @@ class AppState extends ChangeNotifier {
     history.insert(0, ComparisonRecord(profile: profile, item: item));
     notifyListeners();
   }
+
+  void removeComparison(ComparisonRecord record) {
+    history.remove(record);
+    notifyListeners();
+  }
+
+  void toggleFavorite(ComparisonRecord record) {
+    record.isFavorite = !record.isFavorite;
+    notifyListeners();
+  }
+
+  List<ComparisonRecord> get favorites =>
+      history.where((r) => r.isFavorite).toList();
 }
