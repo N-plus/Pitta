@@ -345,7 +345,7 @@ class HomePage extends StatelessWidget {
       record.sleeveDiff,
     ];
     if (diffs.every((d) => d.abs() < 1)) return 'ちょうどいい';
-    if (diffs.any((d) > 0)) return '少し大きめ';
+    if (diffs.any((d) => d > 0)) return '少し大きめ';
     return '少し小さめ';
   }
 
