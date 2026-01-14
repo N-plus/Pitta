@@ -148,15 +148,19 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   @override
   void onPanStart(DragStartInfo info) {
     if (isGameOver || !canDrop) return;
-    _updateDropPosition(info.eventPosition.widget);
+    _updateDropPositionFromEvent(info.eventPosition);
   }
   
   @override
   void onPanUpdate(DragUpdateInfo info) {
     if (isGameOver || !canDrop) return;
-    _updateDropPosition(info.eventPosition.widget);
+    _updateDropPositionFromEvent(info.eventPosition);
   }
   
+  void _updateDropPositionFromEvent(EventPosition eventPosition) {
+    _updateDropPosition(eventPosition.widget);
+  }
+
   void _updateDropPosition(Vector2 widgetPos) {
     final newX = widgetPos.x;
 
