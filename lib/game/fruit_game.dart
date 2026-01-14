@@ -157,54 +157,20 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
     _updateDropPosition(info.eventPosition);
   }
   
-  void _updateDropPosition(dynamic eventPos) {
-    // イベント位置をゲームウィジェット内の座標に変換
-    double newX;
+  void _updateDropPosition(PositionInfo eventPos) {
+    final widgetPos = eventPos.widget;
+    final newX = widgetPos.x;
 
-    try {
-      final widgetPos = eventPos.widget as Vector2;
-      newX = widgetPos.x;
-    } catch (e) {
-      try {
-        final gamePos = eventPos.game as Vector2;
-        newX = _normalizeGameX(gamePos.x);
-      } catch (e2) {
-        try {
-          final globalPos = eventPos.global as Vector2;
-          final localPos = camera.globalToLocal(globalPos);
-          newX = _normalizeGameX(localPos.x);
-        } catch (e3) {
-          final globalPos = eventPos.global as Vector2;
-          final screenSize = size;
-          if (screenSize.x > 0 && screenSize.x >= gameWidth) {
-            // ゲームウィジェットは画面中央に配置されている
-            final gameOffsetX = (screenSize.x - gameWidth) / 2;
-            newX = globalPos.x - gameOffsetX;
-          } else {
-            // フォールバック：global座標を直接使用
-            newX = globalPos.x;
-          }
-        }
-      }
-    }
-    
     // 座標をクランプ
     final minX = wallThickness + (nextFruit?.radius ?? 30);
     final maxX = gameWidth - wallThickness - (nextFruit?.radius ?? 30);
     dropX = newX.clamp(minX, maxX);
   }
-
-  double _normalizeGameX(double gameX) {
-    final threshold = gameWidth / worldScale + wallThickness;
-    if (gameX <= threshold) {
-      return gameX * worldScale;
-    }
-    return gameX;
-  }
   
   @override
   void onTapUp(TapUpEvent event) {
     if (isGameOver || !canDrop || nextFruit == null) return;
+    _updateDropPosition(event.eventPosition);
     _dropFruit();
   }
   
