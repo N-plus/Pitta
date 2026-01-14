@@ -4,12 +4,41 @@ import 'package:audioplayers/audioplayers.dart';
 class AudioManager {
   static final AudioManager _instance = AudioManager._internal();
   factory AudioManager() => _instance;
-  AudioManager._internal();
+  AudioManager._internal() {
+    _configureAudioContext();
+  }
 
   final AudioPlayer _bgmPlayer = AudioPlayer();
   final AudioPlayer _sePlayer = AudioPlayer();
   bool _isBgmEnabled = true;
   bool _isSeEnabled = true;
+
+  Future<void> _configureAudioContext() async {
+    final bgmContext = AudioContext(
+      android: AudioContextAndroid(
+        contentType: AndroidContentType.music,
+        usageType: AndroidUsageType.media,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.ambient,
+        options: [AVAudioSessionOptions.mixWithOthers],
+      ),
+    );
+    final seContext = AudioContext(
+      android: AudioContextAndroid(
+        contentType: AndroidContentType.sonification,
+        usageType: AndroidUsageType.assistanceSonification,
+        audioFocus: AndroidAudioFocus.none,
+      ),
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.ambient,
+        options: [AVAudioSessionOptions.mixWithOthers],
+      ),
+    );
+    await _bgmPlayer.setAudioContext(bgmContext);
+    await _sePlayer.setAudioContext(seContext);
+  }
 
   /// BGMを再生（ループ）
   Future<void> playBgm(String assetPath) async {
