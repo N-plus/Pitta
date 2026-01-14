@@ -57,132 +57,139 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               
               // メインコンテンツ
               Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Spacer(flex: 2),
-                    
-                    // タイトル
-                    AnimatedBuilder(
-                      animation: _bounceController,
-                      builder: (context, child) {
-                        return Transform.translate(
-                          offset: Offset(0, -10 * _bounceController.value),
-                          child: child,
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          // フルーツアイコン
-                          const Text(
-                            '🍒 🍇 🍊 🍎',
-                            style: TextStyle(fontSize: 40),
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // ゲームタイトル
-                          ShaderMask(
-                            shaderCallback: (bounds) => const LinearGradient(
-                              colors: [
-                                Color(0xFFFF6B9D),
-                                Color(0xFFFF8E53),
-                                Color(0xFFFF6B9D),
-                              ],
-                            ).createShader(bounds),
-                            child: const Text(
-                              'くだもの',
-                              style: TextStyle(
-                                fontSize: 56,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: 8,
-                                shadows: [
-                                  Shadow(
-                                    color: Color(0x40000000),
-                                    blurRadius: 8,
-                                    offset: Offset(2, 4),
-                                  ),
-                                ],
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Spacer(flex: 2),
+
+                        // タイトル
+                        AnimatedBuilder(
+                          animation: _bounceController,
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(0, -10 * _bounceController.value),
+                              child: child,
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              // フルーツアイコン
+                              const Text(
+                                '🍒 🍇 🍊 🍎',
+                                style: TextStyle(fontSize: 40),
                               ),
-                            ),
-                          ),
-                          ShaderMask(
-                            shaderCallback: (bounds) => const LinearGradient(
-                              colors: [
-                                Color(0xFFFF8E53),
-                                Color(0xFFFF6B9D),
-                                Color(0xFFFF8E53),
-                              ],
-                            ).createShader(bounds),
-                            child: const Text(
-                              'ぽん！',
-                              style: TextStyle(
-                                fontSize: 72,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: 12,
-                                shadows: [
-                                  Shadow(
-                                    color: Color(0x40000000),
-                                    blurRadius: 8,
-                                    offset: Offset(2, 4),
+                              const SizedBox(height: 16),
+
+                              // ゲームタイトル
+                              ShaderMask(
+                                shaderCallback: (bounds) => const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF6B9D),
+                                    Color(0xFFFF8E53),
+                                    Color(0xFFFF6B9D),
+                                  ],
+                                ).createShader(bounds),
+                                child: const Text(
+                                  'くだもの',
+                                  style: TextStyle(
+                                    fontSize: 56,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    letterSpacing: 8,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color(0x40000000),
+                                        blurRadius: 8,
+                                        offset: Offset(2, 4),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                              ShaderMask(
+                                shaderCallback: (bounds) => const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF8E53),
+                                    Color(0xFFFF6B9D),
+                                    Color(0xFFFF8E53),
+                                  ],
+                                ).createShader(bounds),
+                                child: const Text(
+                                  'ぽん！',
+                                  style: TextStyle(
+                                    fontSize: 72,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    letterSpacing: 12,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color(0x40000000),
+                                        blurRadius: 8,
+                                        offset: Offset(2, 4),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 8),
+                              const Text(
+                                '🍐 🍉 🍈',
+                                style: TextStyle(fontSize: 40),
+                              ),
+                            ],
                           ),
-                          
-                          const SizedBox(height: 8),
-                          const Text(
-                            '🍐 🍉 🍈',
-                            style: TextStyle(fontSize: 40),
+                        ),
+
+                        const Spacer(flex: 1),
+
+                        // 遊び方説明
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B9D)
+                                    .withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                          child: Column(
+                            children: [
+                              const Text(
+                                'あそびかた',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFFF6B9D),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              _buildHowToPlayItem('👆', 'ゆびでスライド → いちをきめる'),
+                              _buildHowToPlayItem('👇', 'タップ → おとす'),
+                              _buildHowToPlayItem('✨', 'おなじくだものをくっつけよう！'),
+                            ],
+                          ),
+                        ),
+
+                        const Spacer(flex: 1),
+
+                        // スタートボタン
+                        _buildStartButton(context),
+
+                        const Spacer(flex: 2),
+                      ],
                     ),
-                    
-                    const Spacer(flex: 1),
-                    
-                    // 遊び方説明
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 40),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFFF6B9D).withValues(alpha: 0.2),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          const Text(
-                            'あそびかた',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFF6B9D),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildHowToPlayItem('👆', 'ゆびでスライド → いちをきめる'),
-                          _buildHowToPlayItem('👇', 'タップ → おとす'),
-                          _buildHowToPlayItem('✨', 'おなじくだものをくっつけよう！'),
-                        ],
-                      ),
-                    ),
-                    
-                    const Spacer(flex: 1),
-                    
-                    // スタートボタン
-                    _buildStartButton(context),
-                    
-                    const Spacer(flex: 2),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -227,18 +234,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildHowToPlayItem(String emoji, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 12,
+        runSpacing: 4,
         children: [
           Text(emoji, style: const TextStyle(fontSize: 20)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Color(0xFF666666),
-                fontWeight: FontWeight.w500,
-              ),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Color(0xFF666666),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
