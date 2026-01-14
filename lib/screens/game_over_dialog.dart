@@ -180,8 +180,10 @@ class _GameOverDialogState extends State<GameOverDialog>
               const SizedBox(height: 32),
               
               // ボタン
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 16,
+                runSpacing: 12,
                 children: [
                   // ホームボタン
                   _buildButton(
@@ -190,9 +192,7 @@ class _GameOverDialogState extends State<GameOverDialog>
                     label: 'おわる',
                     isPrimary: false,
                   ),
-                  
-                  const SizedBox(width: 16),
-                  
+
                   // リトライボタン
                   _buildButton(
                     onTap: widget.onRetry,
