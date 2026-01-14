@@ -117,29 +117,30 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   void _updateDropPosition(dynamic eventPos) {
     // イベント位置をゲームウィジェット内の座標に変換
     double newX;
-    
+
     try {
-      // まずカメラの座標変換を試す（最も正確）
-      final globalPos = eventPos.global as Vector2;
-      final localPos = camera.globalToLocal(globalPos);
-      newX = localPos.x;
+      final gamePos = eventPos.game as Vector2;
+      newX = gamePos.x;
     } catch (e) {
-      // カメラ変換が失敗した場合、screen座標を使用
-      // screen座標はGameWidget内の座標を返す
       try {
-        final screenPos = eventPos.screen as Vector2;
-        newX = screenPos.x;
+        final widgetPos = eventPos.widget as Vector2;
+        newX = widgetPos.x;
       } catch (e2) {
-        // screenも失敗した場合、global座標から手動で計算
-        final globalPos = eventPos.global as Vector2;
-        final screenSize = size;
-        if (screenSize.x > 0 && screenSize.x >= gameWidth) {
-          // ゲームウィジェットは画面中央に配置されている
-          final gameOffsetX = (screenSize.x - gameWidth) / 2;
-          newX = globalPos.x - gameOffsetX;
-        } else {
-          // フォールバック：global座標を直接使用
-          newX = globalPos.x;
+        try {
+          final globalPos = eventPos.global as Vector2;
+          final localPos = camera.globalToLocal(globalPos);
+          newX = localPos.x;
+        } catch (e3) {
+          final globalPos = eventPos.global as Vector2;
+          final screenSize = size;
+          if (screenSize.x > 0 && screenSize.x >= gameWidth) {
+            // ゲームウィジェットは画面中央に配置されている
+            final gameOffsetX = (screenSize.x - gameWidth) / 2;
+            newX = globalPos.x - gameOffsetX;
+          } else {
+            // フォールバック：global座標を直接使用
+            newX = globalPos.x;
+          }
         }
       }
     }
