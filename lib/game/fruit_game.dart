@@ -148,17 +148,16 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   @override
   void onPanStart(DragStartInfo info) {
     if (isGameOver || !canDrop) return;
-    _updateDropPosition(info.eventPosition);
+    _updateDropPosition(info.eventPosition.widget);
   }
   
   @override
   void onPanUpdate(DragUpdateInfo info) {
     if (isGameOver || !canDrop) return;
-    _updateDropPosition(info.eventPosition);
+    _updateDropPosition(info.eventPosition.widget);
   }
   
-  void _updateDropPosition(PositionInfo eventPos) {
-    final widgetPos = eventPos.widget;
+  void _updateDropPosition(Vector2 widgetPos) {
     final newX = widgetPos.x;
 
     // 座標をクランプ
@@ -170,7 +169,7 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   @override
   void onTapUp(TapUpEvent event) {
     if (isGameOver || !canDrop || nextFruit == null) return;
-    _updateDropPosition(event.eventPosition);
+    _updateDropPosition(event.localPosition);
     _dropFruit();
   }
   
