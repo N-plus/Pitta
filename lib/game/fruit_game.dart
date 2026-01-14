@@ -11,20 +11,23 @@ import 'audio_manager.dart';
 
 class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   // ゲーム設定
-  static const double gameWidth = 400;
-  static const double gameHeight = 700;
+  static const double defaultGameWidth = 400;
+  static const double defaultGameHeight = 700;
   static const double wallThickness = 20;
   static const double topMargin = 120;
   
   // ワールドスケール（ピクセルと物理世界の変換）
   final double worldScale = 10.0;
+
+  double gameWidth;
+  double gameHeight;
   
   // ゲーム状態
   int score = 0;
   bool isGameOver = false;
   bool canDrop = true;
   FruitData? nextFruit;
-  double dropX = gameWidth / 2;
+  double dropX;
   
   // コールバック
   final Function(int)? onScoreChanged;
@@ -32,6 +35,8 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   
   // マージ予約リスト
   final List<_MergePair> _pendingMerges = [];
+
+  final List<BodyComponent> _boundaryComponents = [];
   
   // ゲームオーバーチェック用タイマー
   double _gameOverCheckTimer = 0;
@@ -40,7 +45,12 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   FruitGame({
     this.onScoreChanged,
     this.onGameOver,
-  }) : super(
+    double? initialGameWidth,
+    double? initialGameHeight,
+  })  : gameWidth = initialGameWidth ?? defaultGameWidth,
+        gameHeight = initialGameHeight ?? defaultGameHeight,
+        dropX = (initialGameWidth ?? defaultGameWidth) / 2,
+        super(
     gravity: Vector2(0, 30), // ゆっくり落下
     zoom: 1,
   );
@@ -56,7 +66,7 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
     AudioManager().playBgm('assets/sounds/bgm.mp3');
     
     // 壁を作成
-    await _createWalls();
+    await _rebuildBounds();
     
     // ドロッププレビューを追加
     await add(DropPreview());
@@ -64,36 +74,69 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
     // 最初のフルーツを準備
     _prepareNextFruit();
   }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    updateGameSize(size.x, size.y);
+  }
+
+  void updateGameSize(double width, double height) {
+    if (width <= 0 || height <= 0) return;
+    if ((gameWidth - width).abs() < 0.5 && (gameHeight - height).abs() < 0.5) {
+      return;
+    }
+
+    gameWidth = width;
+    gameHeight = height;
+    dropX = gameWidth / 2;
+    _rebuildBounds();
+  }
   
-  Future<void> _createWalls() async {
+  Future<void> _rebuildBounds() async {
+    if (gameWidth <= 0 || gameHeight <= 0) return;
+
+    for (final component in _boundaryComponents) {
+      component.removeFromParent();
+    }
+    _boundaryComponents.clear();
+
     final worldWidth = gameWidth / worldScale;
     final worldHeight = gameHeight / worldScale;
     final wallOffset = wallThickness / worldScale;
     
     // 左壁
-    await add(Wall(
+    final leftWall = Wall(
       start: Vector2(wallOffset, topMargin / worldScale),
       end: Vector2(wallOffset, worldHeight - wallOffset),
-    ));
+    );
+    await add(leftWall);
+    _boundaryComponents.add(leftWall);
     
     // 右壁
-    await add(Wall(
+    final rightWall = Wall(
       start: Vector2(worldWidth - wallOffset, topMargin / worldScale),
       end: Vector2(worldWidth - wallOffset, worldHeight - wallOffset),
-    ));
+    );
+    await add(rightWall);
+    _boundaryComponents.add(rightWall);
     
     // 床
-    await add(Wall(
+    final floor = Wall(
       start: Vector2(wallOffset, worldHeight - wallOffset),
       end: Vector2(worldWidth - wallOffset, worldHeight - wallOffset),
-    ));
+    );
+    await add(floor);
+    _boundaryComponents.add(floor);
     
     // ゲームオーバーライン
-    await add(GameOverLine(
+    final gameOverLine = GameOverLine(
       start: Vector2(wallOffset, topMargin / worldScale),
       end: Vector2(worldWidth - wallOffset, topMargin / worldScale),
       y: topMargin / worldScale,
-    ));
+    );
+    await add(gameOverLine);
+    _boundaryComponents.add(gameOverLine);
   }
   
   void _prepareNextFruit() {
