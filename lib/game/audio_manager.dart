@@ -22,7 +22,7 @@ class AudioManager {
       ),
       iOS: AudioContextIOS(
         category: AVAudioSessionCategory.ambient,
-        options: [AVAudioSessionOptions.mixWithOthers],
+        options: {AVAudioSessionOptions.mixWithOthers},
       ),
     );
     final seContext = AudioContext(
@@ -33,7 +33,7 @@ class AudioManager {
       ),
       iOS: AudioContextIOS(
         category: AVAudioSessionCategory.ambient,
-        options: [AVAudioSessionOptions.mixWithOthers],
+        options: {AVAudioSessionOptions.mixWithOthers},
       ),
     );
     await _bgmPlayer.setAudioContext(bgmContext);
