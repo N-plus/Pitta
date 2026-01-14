@@ -1,45 +1,135 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
+####################################
+# General / OS
+####################################
 .DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+*.swp
+*.bak
+*.old
 
-# IntelliJ related
+####################################
+# Executables / Archives（超重要）
+####################################
+*.exe
+*.msi
+*.dmg
+*.pkg
+*.app
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.iso
+
+####################################
+# IDE / Editor
+####################################
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea/
+.vscode/
+.atom/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+####################################
+# Git / VCS
+####################################
+.svn/
+.hg/
+.history/
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+####################################
+# Dart / Flutter
+####################################
 .dart_tool/
-.flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
-/build/
-/coverage/
+.flutter-plugins
+.flutter-plugins-dependencies
+.build/
+build/
+coverage/
 
-# Symbolication related
-app.*.symbols
+# Flutter build IDs
+**/ios/Flutter/.last_build_id
 
-# Obfuscation related
-app.*.map.json
+####################################
+# Android
+####################################
+android/.gradle/
+android/local.properties
+android/key.properties
+android/**/build/
+android/app/debug/
+android/app/profile/
+android/app/release/
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+*.apk
+*.aab
+
+####################################
+# iOS / macOS
+####################################
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+ios/Flutter/Flutter.framework
+ios/Flutter/App.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/.last_build_id
+ios/Runner/GeneratedPluginRegistrant.*
+
+macos/Pods/
+macos/Flutter/ephemeral/
+macos/Runner/GeneratedPluginRegistrant.*
+
+####################################
+# Windows
+####################################
+windows/flutter/ephemeral/
+windows/**/build/
+windows/runner/Release/
+windows/runner/Debug/
+
+####################################
+# Linux
+####################################
+linux/flutter/ephemeral/
+linux/**/build/
+
+####################################
+# Web
+####################################
+web/build/
+
+####################################
+# Assets（巨大ファイル対策）
+####################################
+assets/**/*.psd
+assets/**/*.ai
+assets/**/*.mp4
+assets/**/*.mov
+assets/**/*.avi
+assets/**/*.mkv
+assets/**/*.exe
+assets/**/*.zip
+
+####################################
+# Environment / Secrets
+####################################
+.env
+.env.*
+*.keystore
+*.jks
+*.pem
+*.p12
+
+####################################
+# Misc
+####################################
+migrate_working_dir/
