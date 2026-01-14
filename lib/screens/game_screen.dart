@@ -177,30 +177,37 @@ class _GameScreenState extends State<GameScreen> {
   }
   
   Widget _buildGameArea() {
-    return Center(
-      child: Container(
-        width: FruitGame.gameWidth,
-        height: FruitGame.gameHeight,
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFF5F7),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: const Color(0xFFFFB6C1),
-            width: 4,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFFF6B9D).withValues(alpha: 0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        _game.updateGameSize(
+          constraints.maxWidth,
+          constraints.maxHeight,
+        );
+
+        return Container(
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFF5F7),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: const Color(0xFFFFB6C1),
+              width: 4,
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: GameWidget(game: _game),
-        ),
-      ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF6B9D).withValues(alpha: 0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: GameWidget(game: _game),
+          ),
+        );
+      },
     );
   }
 }
