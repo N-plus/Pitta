@@ -162,17 +162,17 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
     double newX;
 
     try {
-      final gamePos = eventPos.game as Vector2;
-      newX = gamePos.x;
+      final widgetPos = eventPos.widget as Vector2;
+      newX = widgetPos.x;
     } catch (e) {
       try {
-        final widgetPos = eventPos.widget as Vector2;
-        newX = widgetPos.x;
+        final gamePos = eventPos.game as Vector2;
+        newX = _normalizeGameX(gamePos.x);
       } catch (e2) {
         try {
           final globalPos = eventPos.global as Vector2;
           final localPos = camera.globalToLocal(globalPos);
-          newX = localPos.x;
+          newX = _normalizeGameX(localPos.x);
         } catch (e3) {
           final globalPos = eventPos.global as Vector2;
           final screenSize = size;
@@ -192,6 +192,14 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
     final minX = wallThickness + (nextFruit?.radius ?? 30);
     final maxX = gameWidth - wallThickness - (nextFruit?.radius ?? 30);
     dropX = newX.clamp(minX, maxX);
+  }
+
+  double _normalizeGameX(double gameX) {
+    final threshold = gameWidth / worldScale + wallThickness;
+    if (gameX <= threshold) {
+      return gameX * worldScale;
+    }
+    return gameX;
   }
   
   @override
