@@ -27,6 +27,7 @@ class DropPreview extends Component with HasGameReference<FruitGame> {
       FruitType.pear,
       FruitType.watermelon,
       FruitType.melon,
+      FruitType.devil,
     ];
     
     for (final type in types) {

@@ -9,6 +9,7 @@ enum FruitType {
   pear,       // なし
   watermelon, // すいか
   melon,      // メロン（最終）
+  devil,      // 悪魔
 }
 
 /// フルーツのデータ
@@ -22,6 +23,7 @@ class FruitData {
   final double radius;
   final int points;
   final bool isFinal;
+  final FruitType? nextType;
 
   const FruitData({
     required this.type,
@@ -33,13 +35,15 @@ class FruitData {
     required this.radius,
     required this.points,
     this.isFinal = false,
+    this.nextType,
   });
 
   /// 次のフルーツを取得
   FruitData? get next {
-    final nextIndex = type.index + 1;
-    if (nextIndex >= FruitType.values.length) return null;
-    return fruitDataMap[FruitType.values[nextIndex]];
+    if (nextType != null) {
+      return fruitDataMap[nextType];
+    }
+    return null;
   }
 }
 
@@ -54,6 +58,7 @@ const Map<FruitType, FruitData> fruitDataMap = {
     borderColor: Color(0xFFB33939),
     radius: 15.0,
     points: 1,
+    nextType: FruitType.grape,
   ),
   FruitType.grape: FruitData(
     type: FruitType.grape,
@@ -64,6 +69,7 @@ const Map<FruitType, FruitData> fruitDataMap = {
     borderColor: Color(0xFF6B21A8),
     radius: 22.0,
     points: 2,
+    nextType: FruitType.orange,
   ),
   FruitType.orange: FruitData(
     type: FruitType.orange,
@@ -74,6 +80,7 @@ const Map<FruitType, FruitData> fruitDataMap = {
     borderColor: Color(0xFFCC7000),
     radius: 30.0,
     points: 4,
+    nextType: FruitType.apple,
   ),
   FruitType.apple: FruitData(
     type: FruitType.apple,
@@ -84,6 +91,7 @@ const Map<FruitType, FruitData> fruitDataMap = {
     borderColor: Color(0xFFAA2020),
     radius: 40.0,
     points: 8,
+    nextType: FruitType.pear,
   ),
   FruitType.pear: FruitData(
     type: FruitType.pear,
@@ -94,6 +102,7 @@ const Map<FruitType, FruitData> fruitDataMap = {
     borderColor: Color(0xFF7CB305),
     radius: 52.0,
     points: 12,
+    nextType: FruitType.watermelon,
   ),
   FruitType.watermelon: FruitData(
     type: FruitType.watermelon,
@@ -104,6 +113,7 @@ const Map<FruitType, FruitData> fruitDataMap = {
     borderColor: Color(0xFF1D8348),
     radius: 68.0,
     points: 16,
+    nextType: FruitType.melon,
   ),
   FruitType.melon: FruitData(
     type: FruitType.melon,
@@ -115,6 +125,18 @@ const Map<FruitType, FruitData> fruitDataMap = {
     radius: 85.0,
     points: 20,
     isFinal: true,
+    nextType: null,
+  ),
+  FruitType.devil: FruitData(
+    type: FruitType.devil,
+    name: '悪魔',
+    emoji: '😈',
+    imagePath: 'assets/images/devil.png',
+    color: Color(0xFFB33939),
+    borderColor: Color(0xFF6D214F),
+    radius: 34.0,
+    points: -3,
+    nextType: null,
   ),
 };
 
