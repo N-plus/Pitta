@@ -14,7 +14,7 @@ class FruitGame extends Forge2DGame with TapCallbacks {
   static const double defaultGameWidth = 400;
   static const double defaultGameHeight = 700;
   static const double wallThickness = 20;
-  static const double topMargin = 120;
+  static const double topMargin = 72;
   
   // ワールドスケール（ピクセルと物理世界の変換）
   final double worldScale = 10.0;

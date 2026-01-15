@@ -57,7 +57,15 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: _buildGameArea(),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: _buildScoreHeader(),
+            ),
+            Expanded(child: _buildGameArea()),
+          ],
+        ),
       ),
     );
   }
@@ -73,17 +81,7 @@ class _GameScreenState extends State<GameScreen> {
         return SizedBox(
           width: constraints.maxWidth,
           height: constraints.maxHeight,
-          child: Stack(
-            children: [
-              GameWidget(game: _game),
-              Positioned(
-                top: 12,
-                left: 16,
-                right: 16,
-                child: _buildScoreHeader(),
-              ),
-            ],
-          ),
+          child: GameWidget(game: _game),
         );
       },
     );
@@ -104,10 +102,9 @@ class _GameScreenState extends State<GameScreen> {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildScoreLabel('スコア', _score),
-          _buildScoreLabel('最高得点', _bestScore),
+          Expanded(child: _buildScoreLabel('スコア', _score)),
+          Expanded(child: _buildScoreLabel('最高得点', _bestScore)),
         ],
       ),
     );
@@ -115,10 +112,11 @@ class _GameScreenState extends State<GameScreen> {
 
   Widget _buildScoreLabel(String label, int value) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           label,
+          textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 12,
             color: Color(0xFF6D6D6D),
@@ -128,6 +126,7 @@ class _GameScreenState extends State<GameScreen> {
         const SizedBox(height: 4),
         Text(
           value.toString(),
+          textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
