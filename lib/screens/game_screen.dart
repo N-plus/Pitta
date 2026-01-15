@@ -13,6 +13,7 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   late FruitGame _game;
   int _score = 0;
+  int _bestScore = 0;
   
   @override
   void initState() {
@@ -21,6 +22,9 @@ class _GameScreenState extends State<GameScreen> {
       onScoreChanged: (score) {
         setState(() {
           _score = score;
+          if (_score > _bestScore) {
+            _bestScore = _score;
+          }
         });
       },
       onGameOver: _showGameOver,
@@ -69,9 +73,68 @@ class _GameScreenState extends State<GameScreen> {
         return SizedBox(
           width: constraints.maxWidth,
           height: constraints.maxHeight,
-          child: GameWidget(game: _game),
+          child: Stack(
+            children: [
+              GameWidget(game: _game),
+              Positioned(
+                top: 12,
+                left: 16,
+                right: 16,
+                child: _buildScoreHeader(),
+              ),
+            ],
+          ),
         );
       },
+    );
+  }
+
+  Widget _buildScoreHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildScoreLabel('スコア', _score),
+          _buildScoreLabel('最高得点', _bestScore),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScoreLabel(String label, int value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            color: Color(0xFF6D6D6D),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value.toString(),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF333333),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -9,7 +9,7 @@ import 'effects.dart';
 import 'drop_preview.dart';
 import 'audio_manager.dart';
 
-class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
+class FruitGame extends Forge2DGame with TapCallbacks {
   // ゲーム設定
   static const double defaultGameWidth = 400;
   static const double defaultGameHeight = 700;
@@ -28,6 +28,9 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   bool canDrop = true;
   FruitData? nextFruit;
   double dropX;
+  double _dropDirection = 1;
+  static const double _autoDropSpeed = 140;
+  static const double _devilDropChance = 0.12;
   
   // コールバック
   final Function(int)? onScoreChanged;
@@ -142,28 +145,15 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   void _prepareNextFruit() {
     final types = [FruitType.cherry, FruitType.grape, FruitType.orange];
     final random = Random();
-    nextFruit = fruitDataMap[types[random.nextInt(types.length)]];
+    final isDevil = random.nextDouble() < _devilDropChance;
+    if (isDevil) {
+      nextFruit = fruitDataMap[FruitType.devil];
+    } else {
+      nextFruit = fruitDataMap[types[random.nextInt(types.length)]];
+    }
   }
   
-  @override
-  void onPanStart(DragStartInfo info) {
-    if (isGameOver || !canDrop) return;
-    _updateDropPositionFromEvent(info.eventPosition.widget);
-  }
-  
-  @override
-  void onPanUpdate(DragUpdateInfo info) {
-    if (isGameOver || !canDrop) return;
-    _updateDropPositionFromEvent(info.eventPosition.widget);
-  }
-  
-  void _updateDropPositionFromEvent(Vector2 widgetPosition) {
-    _updateDropPosition(widgetPosition);
-  }
-
-  void _updateDropPosition(Vector2 widgetPos) {
-    final newX = widgetPos.x;
-
+  void _updateDropPosition(double newX) {
     // 座標をクランプ
     final minX = wallThickness + (nextFruit?.radius ?? 30);
     final maxX = gameWidth - wallThickness - (nextFruit?.radius ?? 30);
@@ -173,7 +163,6 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
   @override
   void onTapUp(TapUpEvent event) {
     if (isGameOver || !canDrop || nextFruit == null) return;
-    _updateDropPosition(event.localPosition);
     _dropFruit();
   }
   
@@ -223,6 +212,22 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
       _gameOverCheckTimer = 0;
       _checkGameOver();
     }
+
+    _updateAutoDropPosition(dt);
+  }
+
+  void _updateAutoDropPosition(double dt) {
+    if (isGameOver || !canDrop || nextFruit == null) return;
+    final delta = _autoDropSpeed * dt * _dropDirection;
+    _updateDropPosition(dropX + delta);
+
+    final minX = wallThickness + (nextFruit?.radius ?? 30);
+    final maxX = gameWidth - wallThickness - (nextFruit?.radius ?? 30);
+    if (dropX <= minX + 0.1) {
+      _dropDirection = 1;
+    } else if (dropX >= maxX - 0.1) {
+      _dropDirection = -1;
+    }
   }
   
   void _processMerges() {
@@ -268,7 +273,7 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
       if (nextData.isFinal) {
         _addFinalFruitEffect(screenPos);
       }
-    } else {
+    } else if (fruit1.fruitData.isFinal) {
       // 最終フルーツ同士の合体（ボーナス）
       score += 50;
       onScoreChanged?.call(score);
@@ -330,6 +335,7 @@ class FruitGame extends Forge2DGame with PanDetector, TapCallbacks {
     isGameOver = false;
     canDrop = true;
     dropX = gameWidth / 2;
+    _dropDirection = 1;
     _pendingMerges.clear();
     
     _prepareNextFruit();

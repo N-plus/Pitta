@@ -175,13 +175,17 @@ class ScorePopup extends PositionComponent {
     final progress = _elapsed / duration;
     final alpha = (1 - progress).clamp(0.0, 1.0);
     final yOffset = -progress * 80;
+    final isNegative = points < 0;
 
     final textSpan = TextSpan(
-      text: '+$points',
+      text: isNegative ? '$points' : '+$points',
       style: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFFFF6B9D).withValues(alpha: alpha),
+        color: (isNegative
+                ? const Color(0xFFB33939)
+                : const Color(0xFFFF6B9D))
+            .withValues(alpha: alpha),
         shadows: [
           Shadow(
             color: Colors.white.withValues(alpha: alpha),
