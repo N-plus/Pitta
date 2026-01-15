@@ -163,6 +163,7 @@ class FruitGame extends Forge2DGame with TapCallbacks {
   @override
   void onTapUp(TapUpEvent event) {
     if (isGameOver || !canDrop || nextFruit == null) return;
+    _updateDropPosition(event.canvasPosition.x);
     _dropFruit();
   }
   
